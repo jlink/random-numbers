@@ -1,0 +1,51 @@
+repositories {
+	mavenCentral()
+	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+ext {
+	junitJupiterVersion = '5.6.2'
+	jqwikVersion = '1.2.7'
+	assertJVersion = '3.13.2'
+	junitQuickcheckVersion = '0.9.1'
+	quicktheoriesVersion = '0.26'
+}
+
+apply plugin: 'java'
+
+compileTestJava {
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+	options.compilerArgs += '-parameters'
+}
+
+test {
+	useJUnitPlatform()
+
+	include '**/*Properties.class'
+	include '**/*Test.class'
+	include '**/*Tests.class'
+	// include '**/*Examples.class'
+
+	// testLogging.events = ["passed", "failed", "skipped"]
+	// testLogging.showStandardStreams = true
+}
+
+dependencies {
+	testImplementation("net.jqwik:jqwik:${jqwikVersion}")
+
+	// Fluent assertions library
+	testImplementation("org.assertj:assertj-core:${assertJVersion}")
+
+	// For Jupiter tests and also necessary to work around some IntelliJ bugs
+	testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+	testImplementation("com.pholser:junit-quickcheck-generators:${junitQuickcheckVersion}")
+
+	testImplementation("org.quicktheories:quicktheories:${quicktheoriesVersion}");
+}
+
+wrapper {
+	description = 'Generates gradlew[.bat] scripts'
+	gradleVersion = '6.3'
+}
