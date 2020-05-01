@@ -8,16 +8,10 @@ public class GaussianGenerator implements RandomGenerator<Integer> {
 
 	private final int min;
 	private final int max;
-	private final Random random;
 
-	public GaussianGenerator(Random random, int min, int max) {
+	public GaussianGenerator(int min, int max) {
 		this.min = min;
 		this.max = max;
-		this.random = random;
-	}
-
-	int next() {
-		return next(random).value();
 	}
 
 	@Override

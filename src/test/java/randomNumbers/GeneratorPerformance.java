@@ -18,7 +18,7 @@ public class GeneratorPerformance {
 	@Example
 	@Label("gaussian: -100000 .. 100000")
 	void gaussianMin100000to100000() {
-		RandomGenerator<Integer> generator = new GaussianGenerator(new Random(), -100000, 100000);
+		RandomGenerator<Integer> generator = new GaussianGenerator(-100000, 100000);
 		measure("gaussian", generator);
 	}
 

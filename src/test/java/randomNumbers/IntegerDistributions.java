@@ -35,9 +35,10 @@ class IntegerDistributions {
 	void randomGaussian() {
 		Histogram histogram = Histogram.between(-100000, 100000, 5000);
 
-		GaussianGenerator generator = new GaussianGenerator(new Random(), -100000, 100000);
+		Random random = new Random();
+		GaussianGenerator generator = new GaussianGenerator(-100000, 100000);
 		for (int i = 0; i < 10000; i++) {
-			int value = generator.next();
+			int value = generator.next(random).value();
 			histogram.collect(value);
 		}
 		histogram.printHistogram();
