@@ -2,7 +2,9 @@ package randomNumbers;
 
 import java.util.Random;
 
-public class GaussianGenerator {
+import net.jqwik.api.*;
+
+public class GaussianGenerator implements RandomGenerator<Integer> {
 
 	private final int min;
 	private final int max;
@@ -15,11 +17,36 @@ public class GaussianGenerator {
 	}
 
 	int next() {
+		return next(random).value();
+	}
+
+	@Override
+	public Shrinkable<Integer> next(Random random) {
 		double gaussian = random.nextGaussian();
-		int value = Math.toIntExact((long) (gaussian * max / 3));
+		Integer value = Math.toIntExact((long) (gaussian * max / 3));
 		if (value < min || value > max) {
-			return next();
+			return next(random);
 		}
-		return value;
+		return new Shrinkable<Integer>() {
+			@Override
+			public int compareTo(Shrinkable<Integer> other) {
+				return 0;
+			}
+
+			@Override
+			public Integer value() {
+				return value;
+			}
+
+			@Override
+			public ShrinkingSequence<Integer> shrink(Falsifier falsifier) {
+				return ShrinkingSequence.dontShrink(this);
+			}
+
+			@Override
+			public ShrinkingDistance distance() {
+				return ShrinkingDistance.of(0);
+			}
+		};
 	}
 }
