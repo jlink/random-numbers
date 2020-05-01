@@ -16,10 +16,17 @@ public class GeneratorPerformance {
 	}
 
 	@Example
-	@Label("gaussioan: -100000 .. 100000")
+	@Label("gaussian: -100000 .. 100000")
 	void gaussianMin100000to100000() {
 		RandomGenerator<Integer> generator = new GaussianGenerator(new Random(), -100000, 100000);
 		measure("gaussian", generator);
+	}
+
+	@Example
+	@Label("simple: -100000 .. 100000")
+	void simpleMin100000to100000() {
+		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
+		measure("simple", generator);
 	}
 
 	private void measure(String label, RandomGenerator<Integer> generator) {
