@@ -31,6 +31,19 @@ class IntegerDistributions {
 	}
 
 	@Example
+	@Label("random gaussian: -100000 .. 100000")
+	void randomGaussian() {
+		Histogram histogram = Histogram.between(-100000, 100000, 5000);
+
+		GaussianGenerator generator = new GaussianGenerator(new Random(), -100000, 100000);
+		for (int i = 0; i < 10000; i++) {
+			int value = generator.next();
+			histogram.collect(value);
+		}
+		histogram.printHistogram();
+	}
+
+	@Example
 	@Label("junit-quickcheck: -100000 .. 100000")
 	void junitquickcheckMin100000to100000() {
 		Histogram histogram = Histogram.between(-100000, 100000, 5000);
