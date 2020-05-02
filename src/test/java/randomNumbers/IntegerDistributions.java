@@ -47,7 +47,7 @@ class IntegerDistributions {
 
 	@Example
 	@Label("jqwik BigDecimal: -100000000000 .. 100000000000")
-	void jqwikBigDecimal100000to100000() {
+	void jqwikBigDecimal() {
 		BigInteger min = BigInteger.valueOf(-100_000_000_000L);
 		BigInteger max = BigInteger.valueOf(100_000_000_000L);
 		Histogram histogram = Histogram.between(min, max, BigInteger.valueOf(5_000_000_000L));

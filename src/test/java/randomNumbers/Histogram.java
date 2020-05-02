@@ -45,7 +45,7 @@ public class Histogram {
 		double scale = Math.max(1.0, maxCount.getAsInt() / 100.0);
 		for (int i = 0; i < baskets.size(); i++) {
 			Basket basket = baskets.get(i);
-			String line = String.format("%s (%s) \t: %s", basket.name, basket.count, convertToStars(basket.count, scale));
+			String line = String.format("%s (%s)\t: %s", basket.name, basket.count, convertToStars(basket.count, scale));
 			System.out.println(line);
 		}
 	}
