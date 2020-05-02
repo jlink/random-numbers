@@ -45,6 +45,33 @@ class IntegerDistributions {
 	}
 
 	@Example
+	@Label("fast gaussian: -100000 .. 100000")
+	void fastGaussian() {
+		Histogram histogram = Histogram.between(-100000, 100000, 5000);
+
+		Random random = new FastRandom();
+		GaussianGenerator generator = new GaussianGenerator(-100000, 100000);
+		for (int i = 0; i < 10000; i++) {
+			int value = generator.next(random).value();
+			histogram.collect(value);
+		}
+		histogram.printHistogram();
+	}
+
+	@Example
+	@Label("fast triangle: -100000 .. 100000")
+	void fastTriangle() {
+		Histogram histogram = Histogram.between(-100000, 100000, 5000);
+
+		FastRandom random = new FastRandom();
+		for (int i = 0; i < 10000; i++) {
+			int value = (int) random.triangular(0, 100000, 0);
+			histogram.collect(value);
+		}
+		histogram.printHistogram();
+	}
+
+	@Example
 	@Label("junit-quickcheck: -100000 .. 100000")
 	void junitquickcheckMin100000to100000() {
 		Histogram histogram = Histogram.between(-100000, 100000, 5000);

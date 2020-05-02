@@ -24,6 +24,13 @@ public class GeneratorPerformance {
 	}
 
 	@Example
+	@Label("fast gaussian: -100000 .. 100000")
+	void fastGaussianMin100000to100000() {
+		RandomGenerator<Integer> generator = new GaussianGenerator(-100000, 100000);
+		measure("fast gaussian", generator, new FastRandom());
+	}
+
+	@Example
 	@Label("simple: -100000 .. 100000")
 	void simpleMin100000to100000() {
 		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
@@ -71,7 +78,7 @@ public class GeneratorPerformance {
 
 		double secs = (after - before) / 1000.0;
 
-		System.out.printf("%s secs (%s): %s%n", label, tries, secs);
+		System.out.printf("%s (%s): %s secs%n", label, tries, secs);
 	}
 
 
