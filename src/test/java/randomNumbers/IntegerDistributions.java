@@ -1,9 +1,12 @@
 package randomNumbers;
 
+import java.math.*;
 import java.util.Random;
 
 import com.pholser.junit.quickcheck.random.SourceOfRandomness;
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+
 import org.quicktheories.generators.SourceDSL;
 
 import static org.quicktheories.QuickTheory.*;
@@ -27,6 +30,30 @@ class IntegerDistributions {
 
 		Arbitrary<Integer> integers = Arbitraries.integers().between(-100000, 100000);
 		integers.sampleStream().limit(10000).forEach(i -> histogram.collect(i));
+		histogram.printHistogram();
+	}
+
+	@Example
+	@Label("jqwik BigInteger: -100000000000 .. 100000000000")
+	void jqwikBigInteger100000to100000() {
+		BigInteger min = BigInteger.valueOf(-100_000_000_000L);
+		BigInteger max = BigInteger.valueOf(100_000_000_000L);
+		Histogram histogram = Histogram.between(min, max, BigInteger.valueOf(5_000_000_000L));
+
+		BigIntegerArbitrary integers = Arbitraries.bigIntegers().between(min, max);
+		integers.sampleStream().limit(10000).forEach(i -> histogram.collect(i));
+		histogram.printHistogram();
+	}
+
+	@Example
+	@Label("jqwik BigDecimal: -100000000000 .. 100000000000")
+	void jqwikBigDecimal100000to100000() {
+		BigInteger min = BigInteger.valueOf(-100_000_000_000L);
+		BigInteger max = BigInteger.valueOf(100_000_000_000L);
+		Histogram histogram = Histogram.between(min, max, BigInteger.valueOf(5_000_000_000L));
+
+		BigDecimalArbitrary integers = Arbitraries.bigDecimals().between(new BigDecimal(min), new BigDecimal(max));
+		integers.sampleStream().limit(10000).forEach(i -> histogram.collect(i.toBigInteger()));
 		histogram.printHistogram();
 	}
 
