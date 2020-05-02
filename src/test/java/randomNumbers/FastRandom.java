@@ -24,10 +24,10 @@ public class FastRandom extends java.util.Random {
 
 	@Override
 	public void setSeed(long seed) {
-		seed(seed);
+		seed((int) seed);
 	}
 
-	public void seed(long seed) {
+	public void seed(int seed) {
 		// The only stipulation stated for the xorshift RNG is that at least one of
 		// the seeds x,y,z,w is non-zero. We fulfill that requirement by only allowing
 		// resetting of the x seed

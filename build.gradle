@@ -34,11 +34,11 @@ test {
 dependencies {
 	testImplementation("net.jqwik:jqwik:${jqwikVersion}")
 
-	// Fluent assertions library
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 
-	// For Jupiter tests and also necessary to work around some IntelliJ bugs
 	testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+	testImplementation("org.junit.vintage:junit-vintage-engine:${junitJupiterVersion}")
 
 	testImplementation("com.pholser:junit-quickcheck-generators:${junitQuickcheckVersion}")
 

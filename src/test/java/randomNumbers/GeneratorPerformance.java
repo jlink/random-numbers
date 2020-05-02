@@ -1,6 +1,6 @@
 package randomNumbers;
 
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.*;
 
 import net.jqwik.api.*;
@@ -42,6 +42,23 @@ public class GeneratorPerformance {
 	void threadLocalMin100000to100000() {
 		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
 		measure("thread local", generator, ThreadLocalRandom.current());
+	}
+
+	@Example
+	@Label("threadLocal: -100000 .. 100000")
+	void splittableMin100000to100000() {
+		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
+		measure("splittable", generator, getSplittableRandom());
+	}
+
+	private Random getSplittableRandom() {
+		final SplittableRandom splittableRandom = new SplittableRandom(new Random().nextLong());
+		return new Random() {
+			@Override
+			public int nextInt(int bound) {
+				return splittableRandom.nextInt(bound);
+			}
+		};
 	}
 
 	private void measure(String label, RandomGenerator<Integer> generator, Random random) {
