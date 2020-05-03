@@ -33,6 +33,7 @@ test {
 
 dependencies {
 	testImplementation("net.jqwik:jqwik:${jqwikVersion}")
+	testImplementation("net.jqwik:jqwik-engine:${jqwikVersion}")
 
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 

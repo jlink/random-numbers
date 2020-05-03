@@ -1,13 +1,15 @@
 package randomNumbers;
 
 import java.math.*;
-import java.util.Random;
+import java.util.*;
 
 import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import org.quicktheories.generators.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-
-import org.quicktheories.generators.SourceDSL;
+import net.jqwik.engine.properties.*;
+import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 import static org.quicktheories.QuickTheory.*;
 
@@ -46,14 +48,71 @@ class IntegerDistributions {
 	}
 
 	@Example
-	@Label("jqwik BigDecimal: -100000000000 .. 100000000000")
-	void jqwikBigDecimal() {
+	@Label("jqwik BigInteger: -100000000000 .. 100000000000")
+	void jqwikBigInteger() {
 		BigInteger min = BigInteger.valueOf(-100_000_000_000L);
 		BigInteger max = BigInteger.valueOf(100_000_000_000L);
 		Histogram histogram = Histogram.between(min, max, BigInteger.valueOf(5_000_000_000L));
 
 		BigDecimalArbitrary integers = Arbitraries.bigDecimals().between(new BigDecimal(min), new BigDecimal(max));
 		integers.sampleStream().limit(10000).forEach(i -> histogram.collect(i.toBigInteger()));
+		histogram.printHistogram();
+	}
+
+	@Example
+	@Label("jqwik uniform BigInteger: -100000000000 .. 100000000000")
+	void jqwikBigIntegerUniform() {
+		BigInteger min = BigInteger.valueOf(-100_000_000_000L);
+		BigInteger max = BigInteger.valueOf(100_000_000_000L);
+		Histogram histogram = Histogram.between(min, max, BigInteger.valueOf(5_000_000_000L));
+
+		Range<BigInteger> range = Range.of(min, max);
+		RandomGenerator<BigInteger> bigIntegerRandomGenerator =
+				RandomIntegralGenerators.bigIntegers(range, new BigInteger[0], ignore -> BigInteger.ZERO);
+
+		Random random = new Random();
+		for (int i = 0; i < 10000; i++) {
+			histogram.collect(bigIntegerRandomGenerator.next(random).value());
+		}
+		histogram.printHistogram();
+	}
+
+	@Example
+	@Label("jqwik uniform BigDecimal: -100000000000 .. 100000000000")
+	void jqwikBigDecimalUniform() {
+		BigDecimal min = BigDecimal.valueOf(-100_000_000_000L);
+		BigDecimal max = BigDecimal.valueOf(100_000_000_000L);
+		Histogram histogram = Histogram.between(min.toBigInteger(), max.toBigInteger(), BigInteger.valueOf(5_000_000_000L));
+
+		Range<BigDecimal> range = Range.of(min, max);
+		RandomGenerator<BigDecimal> bigIntegerRandomGenerator =
+				RandomDecimalGenerators.bigDecimals(range, 2, new BigDecimal[0], ignore -> BigDecimal.ZERO);
+
+		Random random = new Random();
+		for (int i = 0; i < 10000; i++) {
+			histogram.collect(bigIntegerRandomGenerator.next(random).value().toBigInteger());
+		}
+		histogram.printHistogram();
+	}
+
+	@Example
+	@Label("jqwik BigDecimal decimal places: -100000000000 .. 100000000000")
+	void jqwikBigDecimalDecimalPlaces() {
+		BigDecimal min = BigDecimal.valueOf(-100_000_000_000L);
+		BigDecimal max = BigDecimal.valueOf(100_000_000_000L);
+		Histogram histogram = Histogram.between(0, 99, 1);
+
+		Range<BigDecimal> range = Range.of(min, max);
+		RandomGenerator<BigDecimal> bigIntegerRandomGenerator =
+				RandomDecimalGenerators.bigDecimals(range, 2, new BigDecimal[0], ignore -> BigDecimal.ZERO);
+
+		Random random = new Random();
+		for (int i = 0; i < 10000; i++) {
+			BigDecimal value = bigIntegerRandomGenerator.next(random).value();
+			BigInteger integerPart = value.toBigInteger().multiply(BigInteger.valueOf(100));
+			BigInteger decimals = value.unscaledValue().subtract(integerPart).abs();
+			histogram.collect(decimals);
+		}
 		histogram.printHistogram();
 	}
 
@@ -116,9 +175,9 @@ class IntegerDistributions {
 	void quicktheoriesMin100000to100000() {
 		Histogram histogram = Histogram.between(-100000, 100000, 5000);
 
-		qt().withGenerateAttempts(10000)
-				.forAll(SourceDSL.integers().between(-100000, 100000))
-				.checkAssert(value -> histogram.collect(value));
+		qt().withExamples(10000)
+			.forAll(SourceDSL.integers().between(-100000, 100000))
+			.checkAssert(value -> histogram.collect(value));
 		histogram.printHistogram();
 	}
 }

@@ -21,7 +21,8 @@ public class Histogram {
 	private int countAll = 0;
 
 	public void addBasket(BigInteger upper) {
-		baskets.add(new Basket(upper, "<" + upper));
+		String name = String.format("<%12s", upper);
+		baskets.add(new Basket(upper, name));
 	}
 
 	public void collect(int value) {
@@ -45,7 +46,7 @@ public class Histogram {
 		double scale = Math.max(1.0, maxCount.getAsInt() / 100.0);
 		for (int i = 0; i < baskets.size(); i++) {
 			Basket basket = baskets.get(i);
-			String line = String.format("%s (%s)\t: %s", basket.name, basket.count, convertToStars(basket.count, scale));
+			String line = String.format("%s (%-4s)\t: %s", basket.name, basket.count, convertToStars(basket.count, scale));
 			System.out.println(line);
 		}
 	}
