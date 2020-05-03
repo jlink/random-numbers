@@ -8,6 +8,7 @@ import org.quicktheories.generators.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
@@ -88,9 +89,37 @@ class IntegerDistributions {
 		RandomGenerator<BigDecimal> bigIntegerRandomGenerator =
 				RandomDecimalGenerators.bigDecimals(range, 2, new BigDecimal[0], ignore -> BigDecimal.ZERO);
 
-		Random random = new Random();
+		// Random random = new Random();
+		Random random = new XORShiftRandom();
 		for (int i = 0; i < 10000; i++) {
-			histogram.collect(bigIntegerRandomGenerator.next(random).value().toBigInteger());
+			BigDecimal value = bigIntegerRandomGenerator.next(random).value();
+			histogram.collect(value.toBigInteger());
+			// Statistics.collect(value.abs().compareTo(BigDecimal.valueOf(1000000000)) <= 0);
+		}
+		histogram.printHistogram();
+	}
+
+	@Example
+	@Label("jqwik small uniform BigDecimal: -100 .. 100")
+	void jqwikSmallBigDecimalUniform() {
+		BigDecimal min = BigDecimal.valueOf(-100L);
+		BigDecimal max = BigDecimal.valueOf(100L);
+		Histogram histogram = Histogram.between(min.toBigInteger(), max.toBigInteger(), BigInteger.valueOf(10L));
+
+		Range<BigDecimal> range = Range.of(min, max);
+		RandomGenerator<BigDecimal> bigIntegerRandomGenerator =
+				RandomDecimalGenerators.bigDecimals(range, 2, new BigDecimal[0], ignore -> BigDecimal.ZERO);
+
+		// Random random = new Random();
+		Random random = new XORShiftRandom();
+		for (int i = 0; i < 1000000; i++) {
+			BigDecimal value = bigIntegerRandomGenerator.next(random).value();
+			histogram.collect(value.toBigInteger());
+			String criterion = value.abs().compareTo(BigDecimal.ZERO) == 0 ? "zero"
+					: value.compareTo(min) == 0 ? "min"
+					: value.compareTo(max) == 0 ? "max"
+					: "other";
+			Statistics.collect(criterion);
 		}
 		histogram.printHistogram();
 	}

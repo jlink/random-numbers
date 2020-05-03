@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 
 public class GeneratorPerformance {
 
-	@Example
+	// @Example
 	@Label("jqwik: -100000 .. 100000")
 	void jqwikMin100000to100000() {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(-100000, 100000);
@@ -16,14 +16,14 @@ public class GeneratorPerformance {
 		measure("jqwik", generator, new Random());
 	}
 
-	@Example
+	// @Example
 	@Label("gaussian: -100000 .. 100000")
 	void gaussianMin100000to100000() {
 		RandomGenerator<Integer> generator = new GaussianGenerator(-100000, 100000);
 		measure("gaussian", generator, new Random());
 	}
 
-	@Example
+	// @Example
 	@Label("fast gaussian: -100000 .. 100000")
 	void fastGaussianMin100000to100000() {
 		RandomGenerator<Integer> generator = new GaussianGenerator(-100000, 100000);
@@ -52,7 +52,7 @@ public class GeneratorPerformance {
 	}
 
 	@Example
-	@Label("threadLocal: -100000 .. 100000")
+	@Label("splittable: -100000 .. 100000")
 	void splittableMin100000to100000() {
 		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
 		measure("splittable", generator, getSplittableRandom());
@@ -66,6 +66,13 @@ public class GeneratorPerformance {
 				return splittableRandom.nextInt(bound);
 			}
 		};
+	}
+
+	@Example
+	@Label("XORShift: -100000 .. 100000")
+	void xorshiftMin100000to100000() {
+		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
+		measure("XORShift", generator, new XORShiftRandom());
 	}
 
 	private void measure(String label, RandomGenerator<Integer> generator, Random random) {
