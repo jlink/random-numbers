@@ -7,20 +7,20 @@ import net.jqwik.api.*;
 
 public class GeneratorPerformance {
 
-	// @Example
+	@Example
 	@Label("jqwik: -100000 .. 100000")
 	void jqwikMin100000to100000() {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(-100000, 100000);
 
 		RandomGenerator<Integer> generator = integers.generator(10000);
-		measure("jqwik", generator, new Random());
+		measure("jqwik", generator, new XORShiftRandom());
 	}
 
-	// @Example
+	@Example
 	@Label("gaussian: -100000 .. 100000")
 	void gaussianMin100000to100000() {
 		RandomGenerator<Integer> generator = new GaussianGenerator(-100000, 100000);
-		measure("gaussian", generator, new Random());
+		measure("gaussian", generator, new XORShiftRandom());
 	}
 
 	// @Example
