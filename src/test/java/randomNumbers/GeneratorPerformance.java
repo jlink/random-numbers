@@ -3,55 +3,83 @@ package randomNumbers;
 import java.util.*;
 import java.util.concurrent.*;
 
+import com.pholser.junit.quickcheck.random.*;
+
 import net.jqwik.api.*;
+import net.jqwik.engine.SourceOfRandomness;
 
 public class GeneratorPerformance {
 
 	@Example
-	@Label("jqwik: -100000 .. 100000")
-	void jqwikMin100000to100000() {
-		Arbitrary<Integer> integers = Arbitraries.integers().between(-100000, 100000);
+	@Label("jqwik biased: -100000 .. 100000")
+	void biasedMin100000to100000() {
+		Arbitrary<Integer> integers =
+				Arbitraries.integers()
+						   .between(-100000, 100000)
+						   .withDistribution(RandomDistribution.biased());
 
 		RandomGenerator<Integer> generator = integers.generator(10000);
-		measure("jqwik", generator, new XORShiftRandom());
+		measure("jqwik biased", generator, SourceOfRandomness.newRandom());
 	}
 
 	@Example
-	@Label("gaussian: -100000 .. 100000")
+	@Label("jqwik uniform: -100000 .. 100000")
+	void uniformMin100000to100000() {
+		Arbitrary<Integer> integers =
+				Arbitraries.integers()
+						   .between(-100000, 100000)
+						   .withDistribution(RandomDistribution.uniform());
+
+		RandomGenerator<Integer> generator = integers.generator(10000);
+		measure("jqwik uniform", generator, SourceOfRandomness.newRandom());
+	}
+
+	@Example
+	@Label("jqwik gaussian: -100000 .. 100000")
 	void gaussianMin100000to100000() {
-		RandomGenerator<Integer> generator = new GaussianGenerator(-100000, 100000);
-		measure("gaussian", generator, new XORShiftRandom());
+		Arbitrary<Integer> integers =
+				Arbitraries.integers()
+						   .between(-100000, 100000)
+						   .withDistribution(RandomDistribution.gaussian());
+
+		RandomGenerator<Integer> generator = integers.generator(10000);
+		measure("jqwik gaussian", generator, SourceOfRandomness.newRandom());
 	}
 
 	// @Example
 	@Label("fast gaussian: -100000 .. 100000")
 	void fastGaussianMin100000to100000() {
-		RandomGenerator<Integer> generator = new GaussianGenerator(-100000, 100000);
+		Arbitrary<Integer> integers =
+				Arbitraries.integers()
+						   .between(-100000, 100000)
+						   .withDistribution(RandomDistribution.gaussian());
+
+		RandomGenerator<Integer> generator = integers.generator(10000);
 		measure("fast gaussian", generator, new FastRandom());
 	}
 
-	@Example
+	// @Example
 	@Label("simple: -100000 .. 100000")
 	void simpleMin100000to100000() {
 		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
 		measure("simple", generator, new Random());
 	}
 
-	@Example
+	// @Example
 	@Label("fast: -100000 .. 100000")
 	void fastMin100000to100000() {
 		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
 		measure("fast", generator, new FastRandom());
 	}
 
-	@Example
+	// @Example
 	@Label("threadLocal: -100000 .. 100000")
 	void threadLocalMin100000to100000() {
 		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
 		measure("thread local", generator, ThreadLocalRandom.current());
 	}
 
-	@Example
+	// @Example
 	@Label("splittable: -100000 .. 100000")
 	void splittableMin100000to100000() {
 		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
@@ -68,11 +96,11 @@ public class GeneratorPerformance {
 		};
 	}
 
-	@Example
+	// @Example
 	@Label("XORShift: -100000 .. 100000")
 	void xorshiftMin100000to100000() {
 		RandomGenerator<Integer> generator = new SimpleGenerator(-100000, 100000);
-		measure("XORShift", generator, new XORShiftRandom());
+		measure("XORShift", generator, SourceOfRandomness.newRandom());
 	}
 
 	private void measure(String label, RandomGenerator<Integer> generator, Random random) {
